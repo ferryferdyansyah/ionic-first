@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Reciclica</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item color="danger">
+      <ion-avatar slot="start">
+        <img src="https://scontent.cdninstagram.com/v/t51.2885-19/369584272_1361414521254054_4510107673535195417_n.jpg?stp=dst-jpg_s80x80&_nc_cat=104&ccb=1-7&_nc_sid=8ae9d6&_nc_ohc=xKSkk8KRkmcAX8Kces8&_nc_ht=scontent.cdninstagram.com&oh=00_AfBppjO2VSNbmYfOLJkE5XEkUdZOgZ-5Ufte6HiAmjhEgw&oe=64EB77BB" 
+        alt="">
+      </ion-avatar>
+      <ion-label>
+        <h1>Alexander</h1>
+        <p>Gathered: <span class="money">$15,00</span></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <!-- <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Last pickup call</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-icon name="hourglass-outline" color="warning" slot="start"></ion-icon>
+        <ion-label>On hold <p>24/08/2023</p> <p>09:09:09</p></ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>Created at 22/08/2023 <p>Notes: we have two bags that are full, one with plastic and the other with glassess</p></ion-label>
+      </ion-item>
+      <ion-button color="danger" fill="clear" size="full">See all...</ion-button>
+    </ion-card-content>
+  </ion-card> -->
+  <app-pickup-call-card status="hold" updateAt="24/08/2023 10.10" createAt="23/08/2023"
+  notes="we have two bags that are full, one with plastic and the other with glassess">
+    <ion-card-header header>
+      <ion-card-subtitle>Last pickup call</ion-card-subtitle>
+    </ion-card-header>
+    <ion-button color="danger" fill="clear" size="full" footer (click)="pickupCalls()">See all...</ion-button>
+  </app-pickup-call-card>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="danger">
+    <ion-icon name="add" (click)="pickupCall()"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+</ion-content>

@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons>
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pickup call</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <img src="../../../assets/icon/map.png" alt="">
+  <ion-card>
+    <ion-card-content>
+      <p>Address: Jaksel</p>
+      <p>Compliment: Apasih</p>
+      <p>Neighbourhood: Robin Hood</p>
+      <p>Zipcode: 5758</p>
+      <p>City name: Jakaah</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-list>
+    <ion-item lines="inset">
+      <ion-label position="floating">Notes</ion-label>
+      <ion-textarea></ion-textarea>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" (click)="createPickup()">Create pickup call</ion-button>
+</ion-content>
