@@ -1,0 +1,78 @@
+setwd("D:/KULIAH UGM/SEMESTER 5/SDGL/Acara 1/DATA CITRA")
+library(raster)
+library(RStoolbox)
+library(rgdal)
+rasterOptions(progress = "Text", tempdir = paste0(getwd(), "/tmp"))
+library(devtools)
+install_github("bleutner/RSToolbox")
+
+#load data raster yang akan dikoreksi, perhatikan working directory
+DEM <- raster("srtm_merge_crop.tif")
+setwd("D:/KULIAH UGM/SEMESTER 5/SDGL/Acara 1/DATA CITRA/LC09_L2SP_119065_20220415_20220419_02_T1")
+LC09_202204 <- list.files(getwd(), "_SR_B") 
+LC09_202204 <- stack(LC09_202204)
+
+setwd("D:/KULIAH UGM/SEMESTER 5/SDGL/Acara 1/DATA CITRA/LC09_L2SP_119065_20220618_20220701_02_T1")
+LC09_202206 <- list.files(getwd(), "_SR_B") 
+LC09_202206 <- stack(LC09_202206)
+
+setwd("D:/KULIAH UGM/SEMESTER 5/SDGL/Acara 1/DATA CITRA/LC09_L2SP_119065_20220805_20220807_02_T1")
+LC09_202208 <- list.files(getwd(), "_SR_B") 
+LC09_202208 <- stack(LC09_202208)
+
+#cek metadata dari masing2 data
+DEM 
+LC09_202204 
+LC09_202206 
+LC09_202208
+
+#lakukan penyesuaian sistem koordinat dari geo ke UTM
+DEM.prj <- projectRaster(DEM, crs = crs(LC09_202204))
+
+#lakukan penyesuaian extent mengikuti extent terkecil
+LC09_202204 <- crop(LC09_202204, extent(DEM.prj))
+
+#resample DEM dan data yang lain mengikuti landsat 2204
+DEM.res <- resample(DEM.prj, LC09_202204, method = "bilinear") 
+LC09_202206 <- resample(LC09_202206, LC09_202204, method = "bilinear") 
+LC09_202208 <- resample(LC09_202208, LC09_202204, method = "bilinear")
+
+#buat variable slope, dan aspek
+DEM.tr <- terrain(DEM.res, opt = c("slope", "aspect"), unit = "radians", neighbors = 8) 
+plot(DEM.tr$slope)
+plot(DEM.tr$aspect)
+
+#koreksi topografi, ambil metadata setiap raster untuk proses koreksi topografi 
+sa <- c(59.12140180, 41.29772686, 50.00117635)
+se <- c(57.32876999, 48.71474855, 52.10096606) 
+sza <- c(90 - se[1], 90 - se[2], 90 - se[3])
+
+#koreksi topografi, ubah derajat menjadi radian
+deg2rad <- function(deg) {(deg * pi) / (180)} 
+sza <- deg2rad(sza)
+sa <- deg2rad(sa)
+
+#lakukan proses koreksi menggunakan cosine correction
+lc09.illu.202204 <- topCor(LC09_202204, DEM.res, solarAngles = c(deg2rad(sa[1]), deg2rad(sza[1])), method = "illu")
+lc09.cosine.202204 <- topCor(LC09_202204, DEM.res, solarAngles = c(deg2rad(sa[1]), deg2rad(sza[1])), method = "cos")
+
+#plot data iluminasi dan hasil cosine
+plot(lc09.illu.202204)
+
+#simpan data raster hasil koreksi ditambah dengan variable slope, aspect dan iluminasi 
+lc09.cosine.202204_add <- stack(lc09.cosine.202204, lc09.illu.202204, DEM.tr$slope, DEM.tr$aspect)
+writeRaster(lc09.cosine.202204_add, "LC09_cosine_add_202204.tif", format = "GTiff", datatype = "FLT4S")
+writeRaster(LC09_202204, "LC09_raw_202204.tif", format = "GTiff", datatype = "FLT4S")
+
+#batch process
+var_name <- list("LC09_202204_", "LC09_202206_", "LC09_202208_") 
+obj_stack <- list(LC09_202204, LC09_202206, LC09_202208)
+
+for(i in 1:length(var_name)){
+  print(paste0("start koreksi topografi ", var_name[i]))
+  lc09.cos <- topCor(obj_stack[[i]], DEM.res, solarAngles = c(deg2rad(sa[i]), deg2rad(sza[i])), method = "cos")
+  lc09.illu <- topCor(lc09.cos, DEM.res, solarAngles = c(deg2rad(sa[i]), deg2rad(sza[i])), method = "illu")
+  lc09.cos.add <- stack(lc09.cos, lc09.illu, DEM.tr$slope, DEM.tr$aspect) 
+  writeRaster(lc09.cos.add, paste0(var_name[i], "cosine_add.tif"), format = "GTiff", datatype = "FLT4S", overwrite=TRUE)
+  print(paste0("wes rampung le prosess ",var_name[i]))
+}

@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { callbackify } from 'util';
+// import { callbackify } from 'util';
 import { HomePage } from './home.page';
 
 describe('HomePage', () => {
@@ -8,7 +8,7 @@ describe('HomePage', () => {
   let fixture: ComponentFixture<HomePage>;
   let router: Router
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(HomePage);
     router =  TestBed.get(Router)
     

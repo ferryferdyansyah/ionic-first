@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RegisterPage } from './register.page';
 
@@ -7,7 +7,7 @@ describe('RegisterPage', () => {
   let fixture: ComponentFixture<RegisterPage>;
   let router: Router
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(RegisterPage);
     router = TestBed.get(Router);
 

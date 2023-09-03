@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { LoaderPage } from './loader.page';
 
@@ -7,7 +7,7 @@ describe('LoaderPage', () => {
   let fixture: ComponentFixture<LoaderPage>;
   let router: Router;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(LoaderPage);
     router = TestBed.get(Router);
 
