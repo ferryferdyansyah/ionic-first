@@ -1,9 +1,7 @@
 ion-content{
-    --background: #eb445a;
+  --background: var(--ion-color-success);
 }
 
-ion-button{
-    position: absolute;
-    right: 0;
-    margin-right: 10px;
+ion-button {
+  margin :10px;
 }

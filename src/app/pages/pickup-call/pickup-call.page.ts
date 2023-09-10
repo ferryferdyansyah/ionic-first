@@ -8,13 +8,13 @@ import { Router } from '@angular/router';
 })
 export class PickupCallPage implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router:Router) { }
 
   ngOnInit() {
   }
 
-  createPickup(){
-    this.router.navigate(['home'])
+  newPickupCall(){
+    this.router.navigate(['home']);
   }
 
 }

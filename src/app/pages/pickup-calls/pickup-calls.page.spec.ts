@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async, waitForAsync } from '@angular/core/testing';
 import { PickupCallsPage } from './pickup-calls.page';
 
 describe('PickupCallsPage', () => {

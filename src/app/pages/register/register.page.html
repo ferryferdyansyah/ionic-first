@@ -1,93 +1,123 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="danger">
+  <ion-toolbar color="success">
     <ion-buttons slot="start">
-      <ion-back-button text=""></ion-back-button>
+      <ion-back-button title=""></ion-back-button>
     </ion-buttons>
     <ion-title>Register</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-card>
+  <form action="" [formGroup]="registerForm.getForm()">
+  <!-- <ion-card>
     <ion-card-header>
       <ion-card-title>What do you want to do with the recyclable waste?</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-radio-group>
-      <ion-item>
-        <ion-label>I want to buy it</ion-label>
-        <ion-radio value="Client" slot="start"></ion-radio>
-      </ion-item>
-      <ion-item>
-        <ion-label>I want to sell it</ion-label>
-        <ion-radio value="Partner" slot="start"></ion-radio>
-      </ion-item>
-    </ion-radio-group>
+        <ion-item>
+          <ion-label>I want to BUY it</ion-label>
+          <ion-radio value="CLIENT" slot="start"></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>I want to SELL it</ion-label>
+          <ion-radio value="PARTNER" slot="start"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Contact</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
-      <!-- <ion-radio-group> -->
       <ion-item>
         <ion-label position="floating">Name</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-input type="text" formControlName="name"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('name')?.touched && registerForm.getForm().get('name')?.errors?.['required']">Name is mandatory</ion-label>
+
       <ion-item>
         <ion-label position="floating">Email</ion-label>
-        <ion-input type="email"></ion-input>
+        <ion-input type="email" formControlName="email"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('email')?.touched && registerForm.getForm().get('email')?.errors?.['required']">Email is mandatory</ion-label>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('email')?.touched && registerForm.getForm().get('email')?.errors?.['email']">Email is invalid</ion-label>
+
       <ion-item>
         <ion-label position="floating">Password</ion-label>
-        <ion-input type="password"></ion-input>
+        <ion-input type="password" formControlName="password"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('password')?.touched && registerForm.getForm().get('password')?.errors?.['required']">password is mandatory</ion-label>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('password')?.touched && registerForm.getForm().get('password')?.errors?.['minlength']">Minimum password is 6 character</ion-label>
+
       <ion-item>
-        <ion-label position="floating">Confirm Password</ion-label>
-        <ion-input type="password"></ion-input>
+        <ion-label position="floating">Confirm password</ion-label>
+        <ion-input type="password" formControlName="repeatPassword"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('repeatPassword')?.touched && registerForm.getForm().get('repeatPassword')?.errors?.['isntMatching']">Password and Confirm Password are different</ion-label>
+
       <ion-item>
-        <ion-label position="floating">Phone Number</ion-label>
-        <ion-input type="tel"></ion-input>
+        <ion-label position="floating">Phone number</ion-label>
+        <ion-input type="tel" formControlName="phone"></ion-input>
       </ion-item>
-    <!-- </ion-radio-group> -->
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('phone')?.touched && registerForm.getForm().get('phone')?.errors?.['required']">Phone is mandatory</ion-label>
     </ion-card-content>
+
   </ion-card>
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Address Infomration</ion-card-title>
+      <ion-card-title>Address Information</ion-card-title>
     </ion-card-header>
-    <ion-card-content>
+
+    <ion-card-content formGroupName="address">
+
       <ion-item>
         <ion-label position="floating">Address</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-input type="text" formControlName="street" #autocomplete></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('street')?.touched && registerForm.getForm().get('street')?.errors?.['required']">Street is mandatory</ion-label>
+
       <ion-item>
         <ion-label position="floating">Number</ion-label>
-        <ion-input type="tel"></ion-input>
+        <ion-input type="tel" formControlName="number"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('number')?.touched && registerForm.getForm().get('number')?.errors?.['required']">Number is mandatory</ion-label>
+
       <ion-item>
-        <ion-label position="floating">Neighbourhood</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-label position="floating">Neighborhood</ion-label>
+        <ion-input type="text" formControlName="neighborhood"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('neighborhood')?.touched && registerForm.getForm().get('neighborhood')?.errors?.['required']">Neighborhood is mandatory</ion-label>
+
       <ion-item>
         <ion-label position="floating">Complement</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-input type="text" formControlName="complement"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('complement')?.touched && registerForm.getForm().get('complement')?.errors?.['required']">Complement is mandatory</ion-label>
+
       <ion-item>
-        <ion-label position="floating">Zipcode</ion-label>
-        <ion-input type="tel"></ion-input>
+        <ion-label position="floating">Zip code</ion-label>
+        <ion-input type="tel" formControlName="zipcode"></ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label position="floating">State</ion-label>
-        <ion-input type="text"></ion-input>
-      </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('zipcode')?.touched && registerForm.getForm().get('zipcode')?.errors?.['required']">Zipcode is mandatory</ion-label>
+
       <ion-item>
         <ion-label position="floating">City</ion-label>
-        <ion-input type="text"></ion-input>
+        <ion-input type="text" formControlName="city"></ion-input>
       </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('city')?.touched && registerForm.getForm().get('city')?.errors?.['required']">City is mandatory</ion-label>
+
+      <ion-item>
+        <ion-label position="floating">State</ion-label>
+        <ion-input type="text" formControlName="state"></ion-input>
+      </ion-item>
+      <ion-label color="danger" *ngIf="registerForm.getForm().get('address')?.get('state')?.touched && registerForm.getForm().get('state')?.errors?.['required']">State is mandatory</ion-label>
+
     </ion-card-content>
   </ion-card>
-  <ion-button color="light" (click)="home()">Register</ion-button>
+<ion-button size="full" color="light" (click)="register()">Register</ion-button>
+</form>
 </ion-content>

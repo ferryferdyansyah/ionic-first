@@ -1,168 +1,141 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { AngularFireModule } from '@angular/fire/compat';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
-import { Store, StoreModule } from '@ngrx/store';
-// import { Observable, of, throwError } from 'rxjs';
-import { AppRoutingModule } from 'src/app/app-routing.module';
-import { User } from 'src/app/model/user/User';
-// import { AuthService } from 'src/app/services/auth/auth.service';
-// import { recoverPassword } from 'src/store/login/login.action';
-import { environment } from 'src/environments/environment';
-import { AppState } from 'src/store/AppState';
-import { loadingReducer } from 'src/store/loading/loading.reducers';
-import { login, loginFail, loginSuccess, recoverPasswordFail, recoverPasswordSuccess, recoverPassword } from 'src/store/login/login.action';
-import { loginReducer } from 'src/store/login/login.reducers';
 import { LoginPage } from './login.page';
+import { Router } from '@angular/router';
+import { IonicModule, ToastController } from '@ionic/angular';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Store, StoreModule} from '@ngrx/store';
+import { loadingReducer } from 'src/store/loading/loading.reducer';
+import { loginReducer } from 'src/store/login/login.reducer';
+import { AppState } from 'src/store/AppState';
+import { login, loginFail, loginSuccess, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.action';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { User } from 'src/app/model/user/User';
+import { Observable, of, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { AngularFireModule } from '@angular/fire/compat'
 
 describe('LoginPage', () => {
   let component: LoginPage;
   let fixture: ComponentFixture<LoginPage>;
   let router: Router;
-  let page: any;
-  let store: Store<AppState>
+  let page:any;
+  let store: Store<AppState>;
   let toastController: ToastController;
-
-  // Inisialisasi
+  let authService: AuthService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      declarations: [LoginPage],
       imports: [
-        // IonicModule.forRoot(),
-        AppRoutingModule, 
-        ReactiveFormsModule, 
-        StoreModule.forRoot([]), 
-        StoreModule.forFeature("loading", loadingReducer), 
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        ReactiveFormsModule,
+        StoreModule.forRoot([]),
+        StoreModule.forFeature("loading", loadingReducer),
         StoreModule.forFeature("login", loginReducer),
-        AngularFireModule.initializeApp(environment.firebaseConfig)]
-    }).compileComponents() 
+        AngularFireModule.initializeApp(environment.firebaseConfig)
+      ]
+    })
     fixture = TestBed.createComponent(LoginPage);
     router = TestBed.get(Router);
     store = TestBed.get(Store);
-    toastController = TestBed.get(ToastController)
+    toastController = TestBed.get(ToastController);
+
 
     component = fixture.componentInstance;
     page = fixture.debugElement.nativeElement;
-    fixture.detectChanges();
   }));
 
-  it('should create form init', () => {
+  it('should create form on init', () => {
     component.ngOnInit();
-
-    expect(component).not.toBeUndefined();
+    expect(component.form).not.toBeUndefined();
   });
-  
-  it('should go to register page', () => {
+
+  it('should go to register page on register', () => {
     spyOn(router, 'navigate');
     component.register();
-
-    expect(router).toHaveBeenCalledWith(['register']);
-  });
-  
-  it('should recover email/password on forgot email/password', () => {
-    // start page
-    fixture.detectChanges()
-    // user set valid email
-    component.form.get('email')?.setValue("valid@email.com")
-    // user clicked on forgot email/password button
-    page.querySelector("#recoverPasswordButton").click()
-    // expect loginState.isRecoveringPassword is true
-    store.select('login').subscribe(loginState => {
-      expect(loginState.isRecoveringPassword).toBeTruthy()
-    })
-    // verify loadingState.show == true
-    store.select('loading').subscribe(loadingState => {
-      expect(loadingState.show).toBeTruthy()
-    })
-  });
-
-  it('given user is recovering password, when success, then hide loading and show success message', () => {
-    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}))
-    // start page
-    fixture.detectChanges()
-    // set login state as recovering password
-    store.dispatch(recoverPassword({email: "any@email.com"}))
-    // set login state as recovered password
-    store.dispatch(recoverPasswordSuccess())
-    // verify loadingState.show == false
-    store.select('loading').subscribe(loadingState => {
-      expect(loadingState.show).toBeFalsy()
-    })
-    // verify message was shown
-    expect(toastController.create).toHaveBeenCalledTimes(1)
+    expect(router.navigate).toHaveBeenCalledWith(['register']);
   })
 
-  it('given user is recovering password, when fail, then hide loading and show error message', () => {
-    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}))
-    // start page
-    fixture.detectChanges()
-    // recover password
-    store.dispatch(recoverPassword({email: "any@email.com"}))
-    // recover password fail
-    store.dispatch(recoverPasswordFail({error: "message"}))
-    // expect loading not showing
-    store.select('loading').subscribe(loadingState => {
-      expect(loadingState.show).toBeFalsy()
+  it('should recover email/password on forgot email/password', () => {
+    fixture.detectChanges();
+    component.form.get('email')?.setValue("valid@gmail.com");
+    page.querySelector("#recoverPasswordButton").click();
+
+    store.select('login').subscribe(loginState => {
+      expect(loginState.isRecoveringPassword).toBeTruthy();
     })
-    // error message was shown
-    expect(toastController.create).toHaveBeenCalledTimes(1)
+    store.select('loading').subscribe(loadingState => {
+      expect(loadingState.show).toBeTruthy();
+    })
+  })
+
+  it('given user recovering password, when success, then hide loading and show success message', () => {
+    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}));
+
+    fixture.detectChanges();
+    store.dispatch(recoverPassword({email: "any@email.com"}));
+    store.dispatch(recoverPasswordSuccess());
+    store.select('loading').subscribe(loadingState => {
+      expect(loadingState.show).toBeFalsy();
+    })
+    expect(toastController.create).toHaveBeenCalledTimes(1);
+  })
+
+  it('given user recovering password, when fail, then hide loading and show error  message', () => {
+    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}));
+
+    fixture.detectChanges();
+    store.dispatch(recoverPassword({email: "any@email.com"}));
+    store.dispatch(recoverPasswordFail({error: "message"}));
+    store.select('loading').subscribe(loadingState => {
+      expect(loadingState.show).toBeFalsy();
+    })
+    expect(toastController.create).toHaveBeenCalledTimes(1);
   })
 
   it('should show loading and start login when logging in', () => {
-    // start page
-    fixture.detectChanges()
-    // set valid email
-    component.form.get('email')?.setValue('valid@email.com')
-    // set any password
-    component.form.get('password')?.setValue('anyPassword')
-    // click on login button
-    page.querySelector('#loginButton').click()
+    fixture.detectChanges();
+    component.form.get('email')?.setValue('valid@email.com');
+    component.form.get('password')?.setValue('anyPassword');
+    page.querySelector("#loginButton").click();
 
-    // expect loading is showing
     store.select('loading').subscribe(loadingState => {
-      expect(loadingState.show).toBeTruthy()
+      expect(loadingState.show).toBeTruthy();
     })
-    // expeng logging in
     store.select('login').subscribe(loginState => {
-      expect(loginState.isLoggingIn).toBeTruthy()
+      expect(loginState.isLoggingIn).toBeTruthy();
     })
   })
 
   it('given user is logging in, when success, then hide loading and send user to home page', () => {
-    spyOn(router, 'navigate')
-  
-    // start page
+    spyOn(router, 'navigate');
+
     fixture.detectChanges();
-    // set valid email
     store.dispatch(login({email: "valid@email.com", password: "anyPassword"}));
     store.dispatch(loginSuccess({user: new User()}));
 
-    // expect loading is hidden
     store.select('loading').subscribe(loadingState => {
       expect(loadingState.show).toBeFalsy();
     })
-    // expect logged in
     store.select('login').subscribe(loginState => {
-      expect(loginState.isLoggedIn).toBeTruthy();
+      expect(loginState.isLoggingIn).toBeTruthy();
     })
-    // expect home page showing
-    expect(router.navigate).toHaveBeenCalledWith(['home'])
+    expect(router.navigate).toHaveBeenCalledWith(['home']);
   })
 
   it('given user is logging in, when fail, then hide loading and show error message', () => {
-    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}))
-    // start page
+    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}));
+
     fixture.detectChanges();
-    // set valid email
-    store.dispatch(login({email: "valid@email.com", password: "anyPassword"}))
-    store.dispatch(loginFail({error: {message: 'error message'}}))
-    // expect loading is hidden
+    store.dispatch(login({email: "valid@email.com", password: "anyPassword"}));
+    store.dispatch(loginFail({error: {message: 'error message'}}));
+
     store.select('loading').subscribe(loadingState => {
       expect(loadingState.show).toBeFalsy();
     })
-    // expect error message shown
-    expect(toastController.create).toHaveBeenCalledTimes(1)
+    expect(toastController.create).toHaveBeenCalledTimes(1);
   })
 
 });

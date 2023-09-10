@@ -1,8 +1,9 @@
+// import { state } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { AppState } from 'src/store/AppState';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AppState } from 'src/app/store/AppState';
-import { LoadingState } from 'src/app/store/loading/LoadingState';
+import { LoadingState } from 'src/store/loading/LoadingState';
 
 @Component({
   selector: 'app-loading',
@@ -11,12 +12,12 @@ import { LoadingState } from 'src/app/store/loading/LoadingState';
 })
 export class LoadingComponent  implements OnInit {
 
-  loadingState$!: Observable<LoadingState>
+  loadingState$!: Observable<LoadingState>;
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<{ loading: LoadingState}>) { }
 
   ngOnInit() {
-    this.loadingState$ = this.store.select('loading')
+    this.loadingState$ = this.store.select(state => state.loading);
   }
 
 }

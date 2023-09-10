@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,6 +9,7 @@ import { PickupCallsPageRoutingModule } from './pickup-calls-routing.module';
 import { PickupCallsPage } from './pickup-calls.page';
 import { ComponentsModule } from 'src/app/components/pickup-call-card/components.module';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -17,6 +18,8 @@ import { ComponentsModule } from 'src/app/components/pickup-call-card/components
     PickupCallsPageRoutingModule,
     ComponentsModule
   ],
-  declarations: [PickupCallsPage]
+  declarations: [
+    PickupCallsPage
+  ]
 })
 export class PickupCallsPageModule {}
